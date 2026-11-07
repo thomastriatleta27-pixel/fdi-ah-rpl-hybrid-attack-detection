@@ -1,5 +1,7 @@
 # FDI-AH
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036265.svg)](https://doi.org/10.5281/zenodo.24036265)
+
 Artefatos da dissertação **Detecção Inteligente de Ataques Híbridos em
 Redes IoT baseadas no protocolo RPL: Uma Abordagem via Machine Learning**.
 
@@ -33,8 +35,9 @@ nó atacante.
 - quatro classes balanceadas.
 
 O diretório `data/sample` contém amostras pequenas para inspeção. Os logs,
-datasets completos, modelos e resultados serão disponibilizados no
-Zenodo. O DOI será inserido antes da publicação da versão v1.0.0.
+datasets completos, modelos, resultados e artefatos de reprodutibilidade
+estão arquivados no Zenodo sob o DOI
+[10.5281/zenodo.24036265](https://doi.org/10.5281/zenodo.24036265).
 
 ## Estrutura
 
@@ -92,5 +95,6 @@ implantação em produção sem validação adicional.
 
 ## Citação
 
-O arquivo `CITATION.cff` fornece os metadados básicos. A citação com DOI
-será adicionada após a publicação no Zenodo.
+O arquivo `CITATION.cff` fornece os metadados para citação. A versão
+completa dos artefatos está associada ao DOI
+[10.5281/zenodo.24036265](https://doi.org/10.5281/zenodo.24036265).

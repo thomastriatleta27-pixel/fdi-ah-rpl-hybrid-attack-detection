@@ -1,5 +1,11 @@
 # Artefatos preparados para o Zenodo
 
+## Registro permanente
+
+- DOI: [10.5281/zenodo.24036265](https://doi.org/10.5281/zenodo.24036265)
+- Zenodo: [https://doi.org/10.5281/zenodo.24036265](https://doi.org/10.5281/zenodo.24036265)
+- Código-fonte: [https://github.com/thomastriatleta27-pixel/fdi-ah-rpl-hybrid-attack-detection](https://github.com/thomastriatleta27-pixel/fdi-ah-rpl-hybrid-attack-detection)
+
 | Arquivo | Conteúdo | Licença |
 |---|---|---|
 | `fdi-ah-raw-logs-v1.0.0.tar.gz` | 40 logs definitivos | CC BY 4.0 |
@@ -14,4 +20,6 @@
     66cefc86a349ca5c53c5f51ded334eadbd7bc77c2889cc888027116840cbe9d5  fdi-ah-models-results-v1.0.0.tar.gz
     8054f503bb9029bb044456282ede994049ba79b43b4b796b79dcf0db9f19541a  fdi-ah-reproducibility-code-v1.0.0.tar.gz
 
-O DOI será inserido neste documento antes da publicação da versão v1.0.0.
+Os valores acima também estão disponíveis no arquivo
+`docs/zenodo-SHA256SUMS.txt`. Cada pacote contém ainda seu próprio
+`MANIFEST.sha256` para validação após a extração.

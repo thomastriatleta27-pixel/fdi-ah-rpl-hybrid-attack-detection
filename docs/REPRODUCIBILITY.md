@@ -93,3 +93,21 @@ Cada pacote do Zenodo contém `MANIFEST.sha256`. Após extrair um pacote:
 
 O arquivo `docs/zenodo-SHA256SUMS.txt` contém os hashes externos dos
 arquivos compactados.
+
+## 10. Obtenção dos artefatos completos
+
+Os logs definitivos, os datasets, as sequências temporais, os modelos,
+os resultados e o pacote integral de código estão preservados no Zenodo:
+
+- DOI: [10.5281/zenodo.24036265](https://doi.org/10.5281/zenodo.24036265);
+- versão dos artefatos: `v1.0.0`;
+- repositório do código: [https://github.com/thomastriatleta27-pixel/fdi-ah-rpl-hybrid-attack-detection](https://github.com/thomastriatleta27-pixel/fdi-ah-rpl-hybrid-attack-detection).
+
+Após baixar os arquivos compactados, valide-os com:
+
+    sha256sum -c SHA256SUMS.txt
+
+Em seguida, depois de extrair cada pacote, valide seu conteúdo com:
+
+    sha256sum -c MANIFEST.sha256
+

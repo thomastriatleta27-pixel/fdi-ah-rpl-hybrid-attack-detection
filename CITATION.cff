@@ -6,7 +6,12 @@ authors:
   - family-names: "de Araujo"
     given-names: "Thomás Silva"
 version: 1.0.0
-date-released: 2026-11-06
+date-released: 2026-11-07
+repository-code: "https://github.com/thomastriatleta27-pixel/fdi-ah-rpl-hybrid-attack-detection"
+url: "https://doi.org/10.5281/zenodo.24036265"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24036265"
 license: BSD-3-Clause
 keywords:
   - RPL
@@ -20,4 +25,5 @@ keywords:
 abstract: >-
   Código, configurações, documentação e amostras do conjunto de dados
   utilizados na avaliação de ataques Sinkhole, Sybil e Hybrid em redes
-  RPL simuladas no Cooja/Contiki-NG.
+  RPL simuladas no Cooja/Contiki-NG. Os conjuntos de dados completos,
+  logs, modelos e resultados estão preservados no Zenodo.
