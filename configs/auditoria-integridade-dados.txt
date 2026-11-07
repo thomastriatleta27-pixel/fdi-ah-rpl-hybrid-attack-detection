@@ -1,0 +1,292 @@
+===== DATASET NO NÍVEL DOS NÓS =====
+Formato: (430800, 46)
+Esperado: (430800, 46)
+Colunas: 46
+Seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Distribuição por classe:
+scenario
+hybrid      107700
+normal      107700
+sinkhole    107700
+sybil       107700
+Name: count, dtype: int64
+Chave encontrada: ['scenario', 'seed', 'node_id', 'window']
+Duplicidades da chave: 0
+Nulos na chave: 0
+Registros por cenário/seed: 10770 a 10770
+
+===== REPRESENTAÇÃO AGREGADA =====
+Formato: (14360, 203)
+Esperado: (14360, 203)
+Características preditivas esperadas: 200
+Distribuição por classe:
+scenario
+hybrid      3590
+normal      3590
+sinkhole    3590
+sybil       3590
+Name: count, dtype: int64
+Duplicidades da chave: 0
+Nulos na chave: 0
+Janelas por cenário/seed: 359 a 359
+
+===== SEQUÊNCIAS TEMPORAIS =====
+Elementos do NPZ: ['X', 'y', 'groups', 'windows']
+X: shape=(14160, 6, 200), dtype=float32
+y: shape=(14160,), dtype=int64
+groups: shape=(14160,), dtype=int64
+windows: shape=(14160,), dtype=int64
+Formato esperado de X: (14160, 6, 200)
+NaN em X: 1864
+Distribuição das classes: {np.int64(0): np.int64(3540), np.int64(1): np.int64(3540), np.int64(2): np.int64(3540), np.int64(3): np.int64(3540)}
+Distribuição das seeds: {np.int64(1): np.int64(1416), np.int64(2): np.int64(1416), np.int64(3): np.int64(1416), np.int64(4): np.int64(1416), np.int64(5): np.int64(1416), np.int64(6): np.int64(1416), np.int64(7): np.int64(1416), np.int64(8): np.int64(1416), np.int64(9): np.int64(1416), np.int64(10): np.int64(1416)}
+Intervalo das janelas finais: 6 a 359
+
+Metadados JSON:
+{
+  "source": "USER_HOME/contiki-ng/experimentos/final/resultados/dataset/dataset_fdi_ah_principal_agregado_janela_3600s.csv",
+  "sequence_length": 6,
+  "window_seconds": 10,
+  "sequence_seconds": 60,
+  "samples": 14160,
+  "timesteps": 6,
+  "features": [
+    "joined_mean",
+    "joined_std",
+    "joined_min",
+    "joined_max",
+    "reachable_mean",
+    "reachable_std",
+    "reachable_min",
+    "reachable_max",
+    "local_rank_mean",
+    "local_rank_std",
+    "local_rank_min",
+    "local_rank_max",
+    "local_rank_valid_mean",
+    "local_rank_valid_std",
+    "local_rank_valid_min",
+    "local_rank_valid_max",
+    "neighbors_count_mean",
+    "neighbors_count_std",
+    "neighbors_count_min",
+    "neighbors_count_max",
+    "cpu_delta_mean",
+    "cpu_delta_std",
+    "cpu_delta_min",
+    "cpu_delta_max",
+    "lpm_delta_mean",
+    "lpm_delta_std",
+    "lpm_delta_min",
+    "lpm_delta_max",
+    "radio_tx_delta_mean",
+    "radio_tx_delta_std",
+    "radio_tx_delta_min",
+    "radio_tx_delta_max",
+    "radio_rx_listen_delta_mean",
+    "radio_rx_listen_delta_std",
+    "radio_rx_listen_delta_min",
+    "radio_rx_listen_delta_max",
+    "preferred_exists_mean",
+    "preferred_exists_std",
+    "preferred_exists_min",
+    "preferred_exists_max",
+    "preferred_rank_mean",
+    "preferred_rank_std",
+    "preferred_rank_min",
+    "preferred_rank_max",
+    "preferred_etx_mean",
+    "preferred_etx_std",
+    "preferred_etx_min",
+    "preferred_etx_max",
+    "preferred_rssi_mean",
+    "preferred_rssi_std",
+    "preferred_rssi_min",
+    "preferred_rssi_max",
+    "preferred_fresh_mean",
+    "preferred_fresh_std",
+    "preferred_fresh_min",
+    "preferred_fresh_max",
+    "candidate_parent_count_mean",
+    "candidate_parent_count_std",
+    "candidate_parent_count_min",
+    "candidate_parent_count_max",
+    "neighbor_rank_mean_mean",
+    "neighbor_rank_mean_std",
+    "neighbor_rank_mean_min",
+    "neighbor_rank_mean_max",
+    "neighbor_rank_min_mean",
+    "neighbor_rank_min_std",
+    "neighbor_rank_min_min",
+    "neighbor_rank_min_max",
+    "neighbor_rank_max_mean",
+    "neighbor_rank_max_std",
+    "neighbor_rank_max_min",
+    "neighbor_rank_max_max",
+    "neighbor_etx_mean_mean",
+    "neighbor_etx_mean_std",
+    "neighbor_etx_mean_min",
+    "neighbor_etx_mean_max",
+    "neighbor_etx_min_mean",
+    "neighbor_etx_min_std",
+    "neighbor_etx_min_min",
+    "neighbor_etx_min_max",
+    "neighbor_etx_max_mean",
+    "neighbor_etx_max_std",
+    "neighbor_etx_max_min",
+    "neighbor_etx_max_max",
+    "neighbor_rssi_mean_mean",
+    "neighbor_rssi_mean_std",
+    "neighbor_rssi_mean_min",
+    "neighbor_rssi_mean_max",
+    "neighbor_rssi_min_mean",
+    "neighbor_rssi_min_std",
+    "neighbor_rssi_min_min",
+    "neighbor_rssi_min_max",
+    "neighbor_rssi_max_mean",
+    "neighbor_rssi_max_std",
+    "neighbor_rssi_max_min",
+    "neighbor_rssi_max_max",
+    "dis_tx_count_mean",
+    "dis_tx_count_std",
+    "dis_tx_count_min",
+    "dis_tx_count_max",
+    "dis_rx_count_mean",
+    "dis_rx_count_std",
+    "dis_rx_count_min",
+    "dis_rx_count_max",
+    "dio_tx_count_mean",
+    "dio_tx_count_std",
+    "dio_tx_count_min",
+    "dio_tx_count_max",
+    "dio_rx_count_mean",
+    "dio_rx_count_std",
+    "dio_rx_count_min",
+    "dio_rx_count_max",
+    "dao_tx_count_mean",
+    "dao_tx_count_std",
+    "dao_tx_count_min",
+    "dao_tx_count_max",
+    "dao_rx_count_mean",
+    "dao_rx_count_std",
+    "dao_rx_count_min",
+    "dao_rx_count_max",
+    "dao_ack_tx_count_mean",
+    "dao_ack_tx_count_std",
+    "dao_ack_tx_count_min",
+    "dao_ack_tx_count_max",
+    "dao_ack_rx_count_mean",
+    "dao_ack_rx_count_std",
+    "dao_ack_rx_count_min",
+    "dao_ack_rx_count_max",
+    "data_tx_count_mean",
+    "data_tx_count_std",
+    "data_tx_count_min",
+    "data_tx_count_max",
+    "data_rx_count_mean",
+    "data_rx_count_std",
+    "data_rx_count_min",
+    "data_rx_count_max",
+    "pdr_mean",
+    "pdr_std",
+    "pdr_min",
+    "pdr_max",
+    "latency_count_mean",
+    "latency_count_std",
+    "latency_count_min",
+    "latency_count_max",
+    "latency_mean_ms_mean",
+    "latency_mean_ms_std",
+    "latency_mean_ms_min",
+    "latency_mean_ms_max",
+    "latency_min_ms_mean",
+    "latency_min_ms_std",
+    "latency_min_ms_min",
+    "latency_min_ms_max",
+    "latency_max_ms_mean",
+    "latency_max_ms_std",
+    "latency_max_ms_min",
+    "latency_max_ms_max",
+    "latency_std_ms_mean",
+    "latency_std_ms_std",
+    "latency_std_ms_min",
+    "latency_std_ms_max",
+    "joined_missing_rate",
+    "reachable_missing_rate",
+    "local_rank_missing_rate",
+    "local_rank_valid_missing_rate",
+    "neighbors_count_missing_rate",
+    "cpu_delta_missing_rate",
+    "lpm_delta_missing_rate",
+    "radio_tx_delta_missing_rate",
+    "radio_rx_listen_delta_missing_rate",
+    "preferred_exists_missing_rate",
+    "preferred_rank_missing_rate",
+    "preferred_etx_missing_rate",
+    "preferred_rssi_missing_rate",
+    "preferred_fresh_missing_rate",
+    "candidate_parent_count_missing_rate",
+    "neighbor_rank_mean_missing_rate",
+    "neighbor_rank_min_missing_rate",
+    "neighbor_rank_max_missing_rate",
+    "neighbor_etx_mean_missing_rate",
+    "neighbor_etx_min_missing_rate",
+    "neighbor_etx_max_missing_rate",
+    "neighbor_rssi_mean_missing_rate",
+    "neighbor_rssi_min_missing_rate",
+    "neighbor_rssi_max_missing_rate",
+    "dis_tx_count_missing_rate",
+    "dis_rx_count_missing_rate",
+    "dio_tx_count_missing_rate",
+    "dio_rx_count_missing_rate",
+    "dao_tx_count_missing_rate",
+    "dao_rx_count_missing_rate",
+    "dao_ack_tx_count_missing_rate",
+    "dao_ack_rx_count_missing_rate",
+    "data_tx_count_missing_rate",
+    "data_rx_count_missing_rate",
+    "pdr_missing_rate",
+    "latency_count_missing_rate",
+    "latency_mean_ms_missing_rate",
+    "latency_min_ms_missing_rate",
+    "latency_max_ms_missing_rate",
+    "latency_std_ms_missing_rate"
+  ],
+  "classes": {
+    "normal": 0,
+    "sinkhole": 1,
+    "sybil": 2,
+    "hybrid": 3
+  }
+}
+
+===== PREDIÇÕES DOS MODELOS =====
+
+XGBoost
+Formato: (14160, 11)
+Esperado: 14160 linhas
+Seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Chave: ['seed', 'end_window']
+Duplicidades: 10620
+Distribuição real: {0: 3540, 1: 3540, 2: 3540, 3: 3540}
+Maior desvio da soma das probabilidades: 1.1355999984807852e-07
+
+LSTM
+Formato: (14160, 11)
+Esperado: 14160 linhas
+Seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Chave: ['seed', 'end_window']
+Duplicidades: 10620
+Distribuição real: {0: 3540, 1: 3540, 2: 3540, 3: 3540}
+Maior desvio da soma das probabilidades: 2.1809999994903961e-07
+
+GRU
+Formato: (14160, 11)
+Esperado: 14160 linhas
+Seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Chave: ['seed', 'end_window']
+Duplicidades: 10620
+Distribuição real: {0: 3540, 1: 3540, 2: 3540, 3: 3540}
+Maior desvio da soma das probabilidades: 2.1069999989187238e-07
+
+===== FIM DA AUDITORIA =====

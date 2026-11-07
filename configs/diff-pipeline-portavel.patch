@@ -1,0 +1,186 @@
+diff -ru codigo/pipeline-original/agregar_dataset_principal_por_janela.py codigo/pipeline-portavel/agregar_dataset_principal_por_janela.py
+--- codigo/pipeline-original/agregar_dataset_principal_por_janela.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/agregar_dataset_principal_por_janela.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,7 +1,8 @@
+ from pathlib import Path
++import os
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ 
+ ENTRADA = (
+     BASE /
+diff -ru codigo/pipeline-original/analisar_politicas_alerta_principal.py codigo/pipeline-portavel/analisar_politicas_alerta_principal.py
+--- codigo/pipeline-original/analisar_politicas_alerta_principal.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/analisar_politicas_alerta_principal.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,7 +1,8 @@
+ from pathlib import Path
++import os
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ RESULTADOS = BASE / "experimentos/final/ml/resultados_principal_4classes"
+ OUT = RESULTADOS / "comparacao_final"
+ 
+diff -ru codigo/pipeline-original/calcular_falsos_alertas_operacionais_principal.py codigo/pipeline-portavel/calcular_falsos_alertas_operacionais_principal.py
+--- codigo/pipeline-original/calcular_falsos_alertas_operacionais_principal.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/calcular_falsos_alertas_operacionais_principal.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,7 +1,8 @@
+ from pathlib import Path
++import os
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ RESULTADOS = BASE / "experimentos/final/ml/resultados_principal_4classes"
+ OUT = RESULTADOS / "comparacao_final"
+ 
+diff -ru codigo/pipeline-original/calcular_tempo_deteccao_principal.py codigo/pipeline-portavel/calcular_tempo_deteccao_principal.py
+--- codigo/pipeline-original/calcular_tempo_deteccao_principal.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/calcular_tempo_deteccao_principal.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,10 +1,11 @@
+ import re
+ from pathlib import Path
++import os
+ 
+ import numpy as np
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ 
+ DATASET = (
+     BASE /
+diff -ru codigo/pipeline-original/calcular_tempo_deteccao_principal_k6.py codigo/pipeline-portavel/calcular_tempo_deteccao_principal_k6.py
+--- codigo/pipeline-original/calcular_tempo_deteccao_principal_k6.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/calcular_tempo_deteccao_principal_k6.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,10 +1,11 @@
+ import re
+ from pathlib import Path
++import os
+ 
+ import numpy as np
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ 
+ DATASET = (
+     BASE /
+diff -ru codigo/pipeline-original/comparar_modelos_principal_por_seed.py codigo/pipeline-portavel/comparar_modelos_principal_por_seed.py
+--- codigo/pipeline-original/comparar_modelos_principal_por_seed.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/comparar_modelos_principal_por_seed.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,6 +1,7 @@
+ import json
+ from itertools import combinations
+ from pathlib import Path
++import os
+ 
+ import numpy as np
+ import pandas as pd
+@@ -10,7 +11,7 @@
+     precision_recall_fscore_support,
+ )
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ RESULTADOS = BASE / "experimentos/final/ml/resultados_principal_4classes"
+ OUT = RESULTADOS / "comparacao_final"
+ OUT.mkdir(parents=True, exist_ok=True)
+diff -ru codigo/pipeline-original/criar_sequencias_principal_60s.py codigo/pipeline-portavel/criar_sequencias_principal_60s.py
+--- codigo/pipeline-original/criar_sequencias_principal_60s.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/criar_sequencias_principal_60s.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,10 +1,11 @@
+ import json
+ from pathlib import Path
++import os
+ 
+ import numpy as np
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ 
+ CSV = (
+     BASE /
+diff -ru codigo/pipeline-original/extrair_dataset_principal_4classes_3600s.py codigo/pipeline-portavel/extrair_dataset_principal_4classes_3600s.py
+--- codigo/pipeline-original/extrair_dataset_principal_4classes_3600s.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/extrair_dataset_principal_4classes_3600s.py	2026-11-04 13:45:24.000000000 +0000
+@@ -3,9 +3,10 @@
+ import math
+ import statistics
+ from pathlib import Path
++import os
+ from collections import defaultdict
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ LOG_BASE = BASE / "experimentos/final/logs/definitivo"
+ OUT = BASE / "experimentos/final/resultados/dataset/dataset_fdi_ah_principal_4classes_3600s.csv"
+ 
+diff -ru codigo/pipeline-original/gerar_graficos_principal.py codigo/pipeline-portavel/gerar_graficos_principal.py
+--- codigo/pipeline-original/gerar_graficos_principal.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/gerar_graficos_principal.py	2026-11-04 13:45:24.000000000 +0000
+@@ -2,12 +2,13 @@
+ matplotlib.use("Agg")
+ 
+ from pathlib import Path
++import os
+ import numpy as np
+ import pandas as pd
+ import matplotlib.pyplot as plt
+ import seaborn as sns
+ 
+-BASE = Path("/home/joaorosa/contiki-ng/experimentos/final/ml/resultados_principal_4classes")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve() / "experimentos/final/ml/resultados_principal_4classes"
+ COMP = BASE / "comparacao_final"
+ OUT = COMP / "graficos"
+ OUT.mkdir(parents=True, exist_ok=True)
+diff -ru codigo/pipeline-original/gerar_tabela_principal_modelos.py codigo/pipeline-portavel/gerar_tabela_principal_modelos.py
+--- codigo/pipeline-original/gerar_tabela_principal_modelos.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/gerar_tabela_principal_modelos.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,8 +1,9 @@
+ import json
+ from pathlib import Path
++import os
+ import pandas as pd
+ 
+-BASE = Path("/home/joaorosa/contiki-ng/experimentos/final/ml/resultados_principal_4classes")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve() / "experimentos/final/ml/resultados_principal_4classes"
+ COMP = BASE / "comparacao_final"
+ 
+ ordem = ["XGBoost_60s", "LSTM", "GRU"]
+diff -ru codigo/pipeline-original/treinar_recorrente_principal_5fold.py codigo/pipeline-portavel/treinar_recorrente_principal_5fold.py
+--- codigo/pipeline-original/treinar_recorrente_principal_5fold.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/treinar_recorrente_principal_5fold.py	2026-11-04 13:45:24.000000000 +0000
+@@ -30,7 +30,7 @@
+ args = parser.parse_args()
+ model_type = args.model
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ NPZ = BASE / "experimentos/final/ml/dados/sequencias_principal_4classes_60s.npz"
+ OUT = BASE / f"experimentos/final/ml/resultados_principal_4classes/{model_type}"
+ 
+diff -ru codigo/pipeline-original/treinar_xgboost_principal_60s.py codigo/pipeline-portavel/treinar_xgboost_principal_60s.py
+--- codigo/pipeline-original/treinar_xgboost_principal_60s.py	2026-11-04 13:23:13.000000000 +0000
++++ codigo/pipeline-portavel/treinar_xgboost_principal_60s.py	2026-11-04 13:45:24.000000000 +0000
+@@ -1,6 +1,7 @@
+ import json
+ import time
+ from pathlib import Path
++import os
+ 
+ import numpy as np
+ import pandas as pd
+@@ -14,7 +15,7 @@
+ )
+ from sklearn.model_selection import GroupKFold
+ 
+-BASE = Path("/home/joaorosa/contiki-ng")
++BASE = Path(os.environ.get("CONTIKI_NG_ROOT", Path.home() / "contiki-ng")).expanduser().resolve()
+ NPZ = BASE / "experimentos/final/ml/dados/sequencias_principal_4classes_60s.npz"
+ CONFIG = BASE / "experimentos/final/ml/dados/sequencias_principal_4classes_60s.json"
+ OUT = BASE / "experimentos/final/ml/resultados_principal_4classes/xgboost_60s"

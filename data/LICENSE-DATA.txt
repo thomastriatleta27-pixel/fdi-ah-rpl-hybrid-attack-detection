@@ -1,0 +1,13 @@
+SPDX-License-Identifier: CC-BY-4.0
+
+Copyright (c) 2026 Thomás Silva de Araujo
+
+Este material está licenciado sob a Creative Commons Attribution 4.0
+International (CC BY 4.0).
+
+É permitido compartilhar e adaptar o material para qualquer finalidade,
+desde que seja atribuída a autoria, fornecido o endereço da licença e
+indicadas eventuais modificações.
+
+Licença integral:
+https://creativecommons.org/licenses/by/4.0/legalcode

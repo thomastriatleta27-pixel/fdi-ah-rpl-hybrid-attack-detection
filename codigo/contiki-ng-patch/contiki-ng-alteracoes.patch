@@ -1,0 +1,407 @@
+diff --git a/os/net/ipv6/uip6.c b/os/net/ipv6/uip6.c
+index 3df0ba53c..b812c7162 100644
+--- a/os/net/ipv6/uip6.c
++++ b/os/net/ipv6/uip6.c
+@@ -1,3 +1,4 @@
++#include <string.h>
+ /*
+  * Copyright (c) 2001-2003, Adam Dunkels.
+  * All rights reserved.
+@@ -156,7 +157,84 @@ uint16_t uip_urglen, uip_surglen;
+ #endif /* UIP_URGDATA > 0 */
+ 
+ /* The uip_len is either 8 or 16 bits, depending on the maximum packet size.*/
++
+ uint16_t uip_len, uip_slen;
++
++/* =========================================================
++ * FDI-AH - Selective Forwarding
++ * ========================================================= */
++#ifndef FDI_AH_SELECTIVE_FORWARDING
++#define FDI_AH_SELECTIVE_FORWARDING 0
++#endif
++
++#if FDI_AH_SELECTIVE_FORWARDING
++
++/*
++ * Contador deterministico de pacotes encaminhaveis.
++ * Politica experimental:
++ *   impar -> encaminha
++ *   par   -> descarta
++ *
++ * Resultado esperado: aproximadamente 50% de descarte.
++ */
++static uint32_t fdi_ah_sf_counter;
++
++static int
++fdi_ah_selective_forwarding_drop(void)
++{
++  typedef struct {
++    uint16_t source_id;
++    uint32_t sequence;
++  } fdi_ah_data_packet_t;
++
++  fdi_ah_data_packet_t packet;
++  uint16_t udp_len;
++
++  /*
++   * O ataque atua exclusivamente sobre trafego UDP encaminhado.
++   * Pacotes de controle RPL/ICMPv6 e demais protocolos seguem
++   * normalmente e nao entram no contador do ataque.
++   */
++  if(uip_last_proto != UIP_PROTO_UDP) {
++    return 0;
++  }
++
++  /*
++   * O comprimento UDP inclui os 8 bytes do cabecalho UDP.
++   * Somente interpreta o payload quando ele possui exatamente
++   * o tamanho do pacote de dados utilizado pelo FDI-AH.
++   */
++  udp_len = uip_ntohs(UIP_UDP_BUF->udplen);
++
++  if(udp_len != UIP_UDPH_LEN + sizeof(fdi_ah_data_packet_t)) {
++    return 0;
++  }
++
++  memcpy(&packet, UIP_UDP_PAYLOAD, sizeof(packet));
++
++  fdi_ah_sf_counter++;
++
++  if((fdi_ah_sf_counter % 2) == 0) {
++    printf("FDI_ATTACK,SELECTIVE_FORWARDING,"
++           "action=DROP,count=%lu,proto=%u,src=%u,seq=%lu\n",
++           (unsigned long)fdi_ah_sf_counter,
++           (unsigned)uip_last_proto,
++           (unsigned)packet.source_id,
++           (unsigned long)packet.sequence);
++    return 1;
++  }
++
++  printf("FDI_ATTACK,SELECTIVE_FORWARDING,"
++         "action=FORWARD,count=%lu,proto=%u,src=%u,seq=%lu\n",
++         (unsigned long)fdi_ah_sf_counter,
++         (unsigned)uip_last_proto,
++         (unsigned)packet.source_id,
++         (unsigned long)packet.sequence);
++
++  return 0;
++}
++#endif /* FDI_AH_SELECTIVE_FORWARDING */
++
+ /** @} */
+ 
+ /*---------------------------------------------------------------------------*/
+@@ -1299,6 +1377,13 @@ uip_process(uint8_t flag)
+       LOG_INFO("Forwarding packet to next hop, dest: ");
+       LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
+       LOG_INFO_("\n");
++      #if FDI_AH_SELECTIVE_FORWARDING
++      if(fdi_ah_selective_forwarding_drop()) {
++        UIP_STAT(++uip_stat.ip.drop);
++        goto drop;
++      }
++      #endif
++
+       UIP_STAT(++uip_stat.ip.forwarded);
+       goto send;
+     } else {
+@@ -1430,6 +1515,13 @@ uip_process(uint8_t flag)
+           LOG_INFO("Forwarding packet to next hop ");
+           LOG_INFO_6ADDR(&UIP_IP_BUF->destipaddr);
+           LOG_INFO_("\n");
++          #if FDI_AH_SELECTIVE_FORWARDING
++          if(fdi_ah_selective_forwarding_drop()) {
++            UIP_STAT(++uip_stat.ip.drop);
++            goto drop;
++          }
++          #endif
++
+           UIP_STAT(++uip_stat.ip.forwarded);
+ 
+           goto send; /* Proceed to forwarding */
+diff --git a/os/net/routing/rpl-lite/rpl-dag.c b/os/net/routing/rpl-lite/rpl-dag.c
+index 3d928283b..42292cad3 100644
+--- a/os/net/routing/rpl-lite/rpl-dag.c
++++ b/os/net/routing/rpl-lite/rpl-dag.c
+@@ -636,6 +636,9 @@ rpl_process_dao(uip_ipaddr_t *from, rpl_dao_t *dao)
+     uip_sr_expire_parent(NULL, from, &dao->parent_addr);
+   } else {
+     if(!uip_sr_update_node(NULL, from, &dao->parent_addr, RPL_LIFETIME(dao->lifetime))) {
++      printf("FDI_DBG,DAO_ROUTE_FAIL,seq=%u,lifetime=%u\n",
++             (unsigned)dao->sequence,
++             (unsigned)dao->lifetime);
+       LOG_ERR("failed to add link on incoming DAO\n");
+       return;
+     }
+diff --git a/os/net/routing/rpl-lite/rpl-icmp6.c b/os/net/routing/rpl-lite/rpl-icmp6.c
+index 160181275..2423605ed 100644
+--- a/os/net/routing/rpl-lite/rpl-icmp6.c
++++ b/os/net/routing/rpl-lite/rpl-icmp6.c
+@@ -57,6 +57,16 @@
+ #define LOG_MODULE "RPL"
+ #define LOG_LEVEL LOG_LEVEL_RPL
+ 
++/* FDI-AH: suporte experimental ao cenário Sinkhole */
++#ifndef FDI_AH_SINKHOLE
++#define FDI_AH_SINKHOLE 0
++#endif
++
++/* FDI-AH: suporte experimental ao cenário Sybil */
++#ifndef FDI_AH_SYBIL
++#define FDI_AH_SYBIL 0
++#endif
++
+ /*---------------------------------------------------------------------------*/
+ #define RPL_DIO_GROUNDED                 0x80
+ #define RPL_DIO_MOP_SHIFT                3
+@@ -132,6 +142,8 @@ rpl_icmp6_update_nbr_table(uip_ipaddr_t *from, nbr_table_reason_t reason, void *
+ static void
+ dis_input(void)
+ {
++  printf("FDI_DBG,DIS_RX\n");
++
+   if(!curr_instance.used) {
+     LOG_WARN("dis_input: not in an instance yet, discard\n");
+     goto discard;
+@@ -166,6 +178,7 @@ rpl_icmp6_dis_output(uip_ipaddr_t *addr)
+   LOG_INFO_6ADDR(addr);
+   LOG_INFO_("\n");
+ 
++  printf("FDI_DBG,DIS_TX\n");
+   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIS, 2);
+ }
+ /*---------------------------------------------------------------------------*/
+@@ -194,6 +207,8 @@ dio_input(void)
+ 
+   uip_ipaddr_copy(&from, &UIP_IP_BUF->srcipaddr);
+ 
++  printf("FDI_DBG,DIO_RX\n");
++
+   buffer_length = uip_len - uip_l3_icmp_hdr_len;
+ 
+   if(buffer_length < 8 + sizeof(dio.dag_id)) {
+@@ -373,6 +388,8 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
+     }
+   }
+ 
++  printf("FDI_DBG,DIO_TX\n");
++
+   /* DAG Information Object */
+   pos = 0;
+ 
+@@ -380,8 +397,25 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
+   buffer[pos++] = curr_instance.instance_id;
+   buffer[pos++] = curr_instance.dag.version;
+ 
++#if FDI_AH_SINKHOLE
++  /*
++   * Cenário experimental Sinkhole:
++   * preserva o Rank interno calculado pelo RPL, mas anuncia no DIO
++   * um Rank artificialmente atrativo equivalente a um nó logo
++   * abaixo da raiz.
++   */
++  rpl_rank_t advertised_rank = 2 * ROOT_RANK;
++
++  set16(buffer, pos,
++        rpl_get_leaf_only() ? RPL_INFINITE_RANK : advertised_rank);
++
++  printf("FDI_ATTACK,SINKHOLE,real_rank=%u,advertised_rank=%u\n",
++         (unsigned)curr_instance.dag.rank,
++         (unsigned)advertised_rank);
++#else
+   set16(buffer, pos,
+         rpl_get_leaf_only() ? RPL_INFINITE_RANK : curr_instance.dag.rank);
++#endif
+   pos += 2;
+ 
+   buffer[pos] = curr_instance.dag.grounded ? RPL_DIO_GROUNDED : 0;
+@@ -467,6 +501,20 @@ rpl_icmp6_dio_output(uip_ipaddr_t *uc_addr)
+   LOG_INFO_6ADDR(addr);
+   LOG_INFO_("\n");
+ 
++  if(addr != NULL) {
++    printf("FDI_DBG,DIO_SEND,unicast=%d,len=%d,dst=%x:%x:%x:%x:%x:%x:%x:%x\n",
++           uc_addr != NULL,
++           pos,
++           (unsigned)UIP_HTONS(addr->u16[0]),
++           (unsigned)UIP_HTONS(addr->u16[1]),
++           (unsigned)UIP_HTONS(addr->u16[2]),
++           (unsigned)UIP_HTONS(addr->u16[3]),
++           (unsigned)UIP_HTONS(addr->u16[4]),
++           (unsigned)UIP_HTONS(addr->u16[5]),
++           (unsigned)UIP_HTONS(addr->u16[6]),
++           (unsigned)UIP_HTONS(addr->u16[7]));
++  }
++
+   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIO, pos);
+ }
+ /*---------------------------------------------------------------------------*/
+@@ -584,6 +632,11 @@ dao_input(void)
+   LOG_INFO_6ADDR(&dao.parent_addr);
+   LOG_INFO_(" \n");
+ 
++  printf("FDI_DBG,DAO_RX,seq=%u,lifetime=%u,k=%u\n",
++         (unsigned)dao.sequence,
++         (unsigned)dao.lifetime,
++         (unsigned)((dao.flags & RPL_DAO_K_FLAG) != 0));
++
+   rpl_process_dao(&from, &dao);
+ 
+   discard:
+@@ -666,6 +719,10 @@ rpl_icmp6_dao_output(uint8_t lifetime)
+   LOG_INFO_("\n");
+ 
+   /* Send DAO to root (IPv6 address is DAG ID) */
++  printf("FDI_DBG,DAO_TX,seq=%u,count=%u,lifetime=%u\n",
++         (unsigned)curr_instance.dag.dao_last_seqno,
++         (unsigned)curr_instance.dag.dao_transmissions,
++         (unsigned)lifetime);
+   uip_icmp6_send(&curr_instance.dag.dag_id, ICMP6_RPL, RPL_CODE_DAO, pos);
+ }
+ #if RPL_WITH_DAO_ACK
+@@ -695,6 +752,11 @@ dao_ack_input(void)
+   LOG_INFO_6ADDR(&UIP_IP_BUF->srcipaddr);
+   LOG_INFO_("\n");
+ 
++  printf("FDI_DBG,DAO_ACK_RX,seq=%u,status=%u,last=%u\n",
++         (unsigned)sequence,
++         (unsigned)status,
++         (unsigned)curr_instance.dag.dao_last_seqno);
++
+   rpl_process_dao_ack(sequence, status);
+ 
+   discard:
+@@ -720,6 +782,10 @@ rpl_icmp6_dao_ack_output(uip_ipaddr_t *dest, uint8_t sequence, uint8_t status)
+   LOG_INFO_6ADDR(dest);
+   LOG_INFO_(" with status %d\n", status);
+ 
++  printf("FDI_DBG,DAO_ACK_TX,seq=%u,status=%u\n",
++         (unsigned)sequence,
++         (unsigned)status);
++
+   uip_icmp6_send(dest, ICMP6_RPL, RPL_CODE_DAO_ACK, 4);
+ }
+ #endif /* RPL_WITH_DAO_ACK */
+diff --git a/os/net/routing/rpl-lite/rpl-timers.c b/os/net/routing/rpl-lite/rpl-timers.c
+index 06ca02cc7..81d528373 100644
+--- a/os/net/routing/rpl-lite/rpl-timers.c
++++ b/os/net/routing/rpl-lite/rpl-timers.c
+@@ -139,6 +139,9 @@ new_dio_interval(void)
+   curr_instance.dag.dio_counter = 0;
+ 
+   /* schedule the timer */
++  printf("FDI_DBG,TRICKLE_SCHEDULE,ticks=%lu,int=%u\n",
++         (unsigned long)ticks,
++         (unsigned)curr_instance.dag.dio_intcurrent);
+   ctimer_set(&curr_instance.dag.dio_timer, ticks, &handle_dio_timer, NULL);
+ 
+ #ifdef RPL_CALLBACK_NEW_DIO_INTERVAL
+@@ -149,26 +152,43 @@ new_dio_interval(void)
+ void
+ rpl_timers_dio_reset(const char *str)
+ {
+-  if(rpl_dag_ready_to_advertise() &&
++  int ready = rpl_dag_ready_to_advertise();
++
++  printf("FDI_DBG,DIO_RESET_CALL,reason=%s,state=%u,ready=%d,int=%u,min=%u,leaf=%u\n",
++         str,
++         (unsigned)curr_instance.dag.state,
++         ready,
++         (unsigned)curr_instance.dag.dio_intcurrent,
++         (unsigned)curr_instance.dio_intmin,
++         (unsigned)rpl_get_leaf_only());
++
++  if(ready &&
+      (curr_instance.dag.dio_intcurrent == 0 ||
+       curr_instance.dag.dio_intcurrent > curr_instance.dio_intmin)) {
+-    /*
+-     * don't reset the DIO timer if the current interval is Imin; see
+-     * Section 4.2, RFC 6206.
+-     */
++
++    printf("FDI_DBG,DIO_RESET_ACCEPT,reason=%s\n", str);
++
+     LOG_INFO("reset DIO timer (%s)\n", str);
++
+     if(!rpl_get_leaf_only()) {
+         curr_instance.dag.dio_counter = 0;
+         curr_instance.dag.dio_intcurrent = curr_instance.dio_intmin;
+         new_dio_interval();
+     }
++  } else {
++    printf("FDI_DBG,DIO_RESET_REJECT,reason=%s\n", str);
+   }
+ }
+ /*---------------------------------------------------------------------------*/
+ static void
+ handle_dio_timer(void *ptr)
+ {
++  printf("FDI_DBG,TRICKLE_HANDLER,send=%u,counter=%u\n",
++         (unsigned)curr_instance.dag.dio_send,
++         (unsigned)curr_instance.dag.dio_counter);
++
+   if(!rpl_dag_ready_to_advertise()) {
++    printf("FDI_DBG,TRICKLE_NOT_READY\n");
+     return; /* We will be scheduled again later */
+   }
+ 
+@@ -177,6 +197,10 @@ handle_dio_timer(void *ptr)
+     is set to 0, or if we are the root */
+     if(rpl_dag_root_is_root() || curr_instance.dio_redundancy == 0 ||
+         curr_instance.dag.dio_counter < curr_instance.dio_redundancy) {
++
++      printf("FDI_DBG,TRICKLE_SEND,counter=%u,redundancy=%u\n",
++             (unsigned)curr_instance.dag.dio_counter,
++             (unsigned)curr_instance.dio_redundancy);
+ #if RPL_TRICKLE_REFRESH_DAO_ROUTES
+       if(rpl_dag_root_is_root()) {
+         static int count = 0;
+@@ -189,6 +213,10 @@ handle_dio_timer(void *ptr)
+ #endif /* RPL_TRICKLE_REFRESH_DAO_ROUTES */
+       curr_instance.dag.last_advertised_rank = curr_instance.dag.rank;
+       rpl_icmp6_dio_output(NULL);
++    } else {
++      printf("FDI_DBG,TRICKLE_SUPPRESS,counter=%u,redundancy=%u\n",
++             (unsigned)curr_instance.dag.dio_counter,
++             (unsigned)curr_instance.dio_redundancy);
+     }
+     curr_instance.dag.dio_send = 0;
+     ctimer_set(&curr_instance.dag.dio_timer, curr_instance.dag.dio_next_delay, handle_dio_timer, NULL);
+@@ -267,6 +295,12 @@ rpl_timers_schedule_dao(void)
+     * only serves storing mode. Use simple delay instead, with the only purpose
+     * to reduce congestion. */
+     clock_time_t expiration_time = RPL_DAO_DELAY / 2 + (random_rand() % (RPL_DAO_DELAY));
++    printf("FDI_DBG,DAO_SCHEDULE,ticks=%lu,state=%u\n",
++           (unsigned long)expiration_time,
++           (unsigned)curr_instance.dag.state);
++    printf("FDI_DBG,DAO_SCHEDULE,ticks=%lu,state=%u\n",
++           (unsigned long)expiration_time,
++           (unsigned)curr_instance.dag.state);
+     ctimer_set(&curr_instance.dag.dao_timer, expiration_time, send_new_dao, NULL);
+   }
+ }
+@@ -274,6 +308,10 @@ rpl_timers_schedule_dao(void)
+ static void
+ send_new_dao(void *ptr)
+ {
++  printf("FDI_DBG,DAO_TIMER_FIRE,state=%u\n",
++         (unsigned)curr_instance.dag.state);
++  printf("FDI_DBG,DAO_TIMER_FIRE,state=%u\n",
++         (unsigned)curr_instance.dag.state);
+ #if RPL_WITH_DAO_ACK
+   /* We are sending a new DAO here. Prepare retransmissions */
+   curr_instance.dag.dao_transmissions = 1;
+@@ -327,6 +365,12 @@ rpl_timers_notify_dao_ack(void)
+ static void
+ resend_dao(void *ptr)
+ {
++  printf("FDI_DBG,DAO_RETX,count=%u,state=%u\n",
++         (unsigned)(curr_instance.dag.dao_transmissions + 1),
++         (unsigned)curr_instance.dag.state);
++  printf("FDI_DBG,DAO_RETX,count=%u,state=%u\n",
++         (unsigned)(curr_instance.dag.dao_transmissions + 1),
++         (unsigned)curr_instance.dag.state);
+   /* Increment transmission counter before sending */
+   curr_instance.dag.dao_transmissions++;
+   /* Send a DAO with own prefix as target and default lifetime */

@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+ml-env/
+
+# Compilação do Contiki-NG
+build/
+*.sky
+*.elf
+*.hex
+*.map
+*.o
+
+# Resultados de execução
+*.log
+*.pid
+
+# Datasets e modelos completos
+*.csv
+*.npz
+*.npy
+*.h5
+*.keras
+*.joblib
+*.pkl
+*.model
+
+# Amostras permitidas
+!data/sample/*.csv
+!data/sample/*.npz
+!data/sample/*.json
+
+# Pacotes destinados ao Zenodo
+zenodo-staging*/
+archives/
+*.tar.gz
+
+# Editores e sistema operacional
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

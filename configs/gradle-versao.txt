@@ -1,0 +1,14 @@
+
+------------------------------------------------------------
+Gradle 8.14.2
+------------------------------------------------------------
+
+Build time:    2025-06-05 13:32:01 UTC
+Revision:      30db2a3bdfffa9f8b40e798095675f9dab990a9a
+
+Kotlin:        2.0.21
+Groovy:        3.0.24
+Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024
+Launcher JVM:  17.0.20.1 (Ubuntu 17.0.20.1+1-1-24.04-Ubuntu)
+Daemon JVM:    /usr/lib/jvm/java-17-openjdk-amd64 (no JDK specified, using current Java home)
+OS:            Linux 6.8.0-142-generic amd64

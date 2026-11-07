@@ -1,0 +1,33 @@
+{
+  "description": "Amostra para inspeção e testes rápidos; não substitui o dataset completo.",
+  "class_mapping": {
+    "normal": 0,
+    "sinkhole": 1,
+    "sybil": 2,
+    "hybrid": 3
+  },
+  "selected_original_indices": [
+    3540,
+    7080,
+    10620,
+    0
+  ],
+  "original_sequence_count": 14160,
+  "sample_sequence_count": 4,
+  "original_X_shape": [
+    14160,
+    6,
+    200
+  ],
+  "sample_X_shape": [
+    4,
+    6,
+    200
+  ],
+  "arrays": [
+    "X",
+    "groups",
+    "windows",
+    "y"
+  ]
+}
